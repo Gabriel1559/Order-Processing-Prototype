@@ -1,0 +1,9 @@
+# Node.js / TypeScript
+node_modules/
+dist/
+.env
+*.log
+
+# SQL Server database files
+*.mdf
+*.ldf

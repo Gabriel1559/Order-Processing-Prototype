@@ -1,0 +1,19 @@
+{
+  "name": "project-weicon",
+  "version": "1.0.0",
+  "description": "This is a project prepared for an interview at Weicon",
+  "license": "ISC",
+  "author": "Gabi",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node backend/src/app.ts",
+    "dev": "ts-node-dev backend/src/app.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
