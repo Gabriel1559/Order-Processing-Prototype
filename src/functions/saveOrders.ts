@@ -1,21 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { parseEDIFACT } from './parse/edifactParse.js';
-import { getConnection } from './database/dbConnection.js';
+import { getConnection } from "../database/dbConnection.js";
+import { parseEDIFACT } from "../parse/edifactParse.js";
 
-@Injectable()
-export class AppService {
-  // Returns parsed orders from EDIFACT file
-  getOrders() {
-    return parseEDIFACT();
-  }
-
-  // Saves parsed orders into SQL Server
+export class OrderService {
   async saveOrders(): Promise<string> {
-    const orders = parseEDIFACT(); // array of orders
+    const orders = parseEDIFACT();
     const pool = await getConnection();
-
     for (const order of orders) {
-      // Save or merge customer
+      // save customer
       await pool.request()
         .input('Id', order.customer.id)
         .input('Name', order.customer.name)
@@ -24,11 +15,10 @@ export class AppService {
           MERGE Customers AS target
           USING (SELECT @Id AS Id) AS source
           ON target.Id = source.Id
-          WHEN NOT MATCHED THEN
-            INSERT (Id, Name, Address) VALUES (@Id, @Name, @Address);
+          WHEN NOT MATCHED THEN INSERT (Id, Name, Address) VALUES (@Id, @Name, @Address);
         `);
 
-      // Save order
+      // save order
       await pool.request()
         .input('OrderId', order.orderId)
         .input('CustomerId', order.customer.id)
@@ -38,11 +28,11 @@ export class AppService {
           VALUES (@OrderId, @CustomerId, @OrderDate);
         `);
 
-      // Save order items
+      // save order items
       for (const [index, item] of order.items.entries()) {
         await pool.request()
           .input('OrderId', order.orderId)
-          .input('ItemId', index + 1) // simple id for example
+          .input('ItemId', index + 1)
           .input('Quantity', item.quantity)
           .input('Price', item.price)
           .query(`
@@ -51,8 +41,6 @@ export class AppService {
           `);
       }
     }
-
-    return '✅ Orders saved successfully';
+    return 'Orders saved successfully';
   }
-    
 }

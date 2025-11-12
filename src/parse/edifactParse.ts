@@ -85,5 +85,5 @@ export function parseEDIFACT(fileName = "mockdata.txt") {
   console.log(JSON.stringify(parsedOrders, null, 2));
 
   // Return parsed data as JSON string
-  return JSON.stringify(parsedOrders, null, 2);
+  return parsedOrders;
 }
